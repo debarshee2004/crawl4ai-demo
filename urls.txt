@@ -1,0 +1,3 @@
+https://elevenlabs.io/docs/product/voices/default-voices
+https://elevenlabs.io/docs/product/voices/voice-lab/professional-voice-cloning
+https://elevenlabs.io/docs/product/workspace/sso_setup
