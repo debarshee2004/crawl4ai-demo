@@ -4,16 +4,21 @@ from crawl4ai import AsyncWebCrawler  # type: ignore
 from urllib.parse import urlparse
 
 
+# Define a helper function to print in green
+def print_green(text):
+    print(f"\033[92m{text}\033[0m")
+
+
 async def crawl_single(url: str, filename: str):
     async with AsyncWebCrawler(verbose=True) as crawler:
         result = await crawler.arun(url=url)
     with open(filename, "w", encoding="utf-8") as file:
         file.write(str(result.markdown))
-    print(f"Results saved to {filename}")
+    print_green(f"Results saved to {filename}")
 
 
 async def crawl_multiple(urls_file: str):
-    os.makedirs("outputs", exist_ok=True)
+    os.makedirs("output", exist_ok=True)
     async with AsyncWebCrawler(verbose=True) as crawler:
         with open(urls_file, "r") as file:
             urls = file.read().splitlines()
@@ -22,11 +27,11 @@ async def crawl_multiple(urls_file: str):
             file_name = f"{parsed_url.netloc.replace('.', '-')}{parsed_url.path.replace('/', '-')}"
             if file_name.endswith("-"):
                 file_name = file_name[:-1]  # Remove trailing hyphen
-            file_path = os.path.join("outputs", file_name + ".md")
+            file_path = os.path.join("output", file_name + ".md")
             result = await crawler.arun(url=url)
             with open(file_path, "w", encoding="utf-8") as output_file:
                 output_file.write(str(result.markdown))
-            print(f"Results for {url} saved to {file_path}")
+            print_green(f"Results for {url} saved to {file_path}")
 
 
 async def main():
@@ -37,7 +42,7 @@ async def main():
     if choice == "1":
         url_input = input("Enter the URL to crawl: ")
         filename = input(
-            "Enter the filename to save the result (default: demo-output.txt): "
+            "Enter the filename to save the result (default: demo-output): "
         )
         if filename == "":
             filename = "demo-output"  # Default file name
@@ -46,7 +51,7 @@ async def main():
         await crawl_single(url_input, file_path)
 
     elif choice == "2":
-        urls_file = input("Enter the .txt file containing URLs (default: urls.txt): ")
+        urls_file = input("Enter the .txt file containing URLs (default: urls): ")
         if urls_file == "":
             urls_file = "urls"  # Default file name
         await crawl_multiple(urls_file + ".txt")
